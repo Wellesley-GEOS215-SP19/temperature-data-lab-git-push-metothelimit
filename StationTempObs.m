@@ -30,7 +30,7 @@ stationlon = 122.33; %uncomment to run this line of code after adding the statio
 year = stationdata{:,3};
 jan = stationdata{:,4};
 
-plot(year, jan, ".");
+figure1 = plot(year, jan, ".");
 
 % Calculate the monthly mean, minimum, maximum, and standard deviation
 % note: some of these values will come out as NaN is you use the regular
@@ -50,18 +50,20 @@ tempData = table2array(stationdata(:,4:15));
 %Calculate the mean, standard deviation, minimum, and maximum temperature
 %for every month. This will be similar to what you did above for a single
 %month, but now applied over all months simultaneously.
-year_temps = stationdata{:,4:15};
-tempMean = nanmean(year_temps);
-tempStd = nanstd(year_temps);
+
+tempMean = nanmean(tempData);
+tempStd = nanstd(tempData);
 tempMin = min(year_temps);
 tempMax = max(year_temps);
-disp(tempStd);
+disp(tempMax);
 
 %Use the plotting function "errorbar" to plot the monthly climatology with
 %error bars representing the standard deviation. Add a title and axis
 %labels. Use the commands "axis", "xlim", and/or "ylim" if you want to
 %change from the automatic x or y axis limits.
-    %figure(1); clf
+figure(1); clf
+errorbar(tempMean, tempStd);
+
 %---------PLEASE FIX------------    
 % errorbar(year_temps, tempStd);
 %% Fill missing values with the monthly climatological value
@@ -73,9 +75,9 @@ for i = 1:12
     %use the find and isnan functions to find the index location in the
     %array of data points with NaN values
     indnan = find(isnan(tempData(:,i)) == 1); %check to make sure you understand what is happening in this line
-    disp(indnan);
+   
     %now fill the corresponding values with the climatological mean
-    %stationdata(,indnan) = tempMean;
+    %stationdata(indnan,i) = tempMean;
 end
 
 %% Calculate the annual mean temperature for each year
