@@ -53,19 +53,21 @@ tempData = table2array(stationdata(:,4:15));
 
 tempMean = nanmean(tempData);
 tempStd = nanstd(tempData);
-tempMin = min(year_temps);
-tempMax = max(year_temps);
-disp(tempMax);
+tempMin = min(tempData);
+tempMax = max(tempData);
+%disp(tempMax);
 
 %Use the plotting function "errorbar" to plot the monthly climatology with
 %error bars representing the standard deviation. Add a title and axis
 %labels. Use the commands "axis", "xlim", and/or "ylim" if you want to
 %change from the automatic x or y axis limits.
 figure(1); clf
-errorbar(tempMean, tempStd);
+errorbar(tempMean, tempStd,"-*k");
+title("Mean monthly temperatures at Sea-Tac from 1894-2006");
+ylabel("Temperature (C)");
+xlabel("Months");
+xlim([0 13]);
 
-%---------PLEASE FIX------------    
-% errorbar(year_temps, tempStd);
 %% Fill missing values with the monthly climatological value
 % Find all values of NaN in tempData and replace them with the
 % corresponding climatological mean value calculated above.
