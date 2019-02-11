@@ -72,19 +72,20 @@ xlim([0 13]);
 % Find all values of NaN in tempData and replace them with the
 % corresponding climatological mean value calculated above.
 
-% We can do this by looping over each month in the year:
+% We can do this by looping over each month in the year
 for i = 1:12
     %use the find and isnan functions to find the index location in the
     %array of data points with NaN values
     indnan = find(isnan(tempData(:,i)) == 1); %check to make sure you understand what is happening in this line
-   
-    %now fill the corresponding values with the climatological mean
-    %stationdata(indnan,i) = tempMean;
+    
+    %now fill the corresponding values with the climatological meean
+    tempData(indnan,i) = tempMean(i);
+    
 end
 
 %% Calculate the annual mean temperature for each year
-% --> 
-
+    meanTempYear = mean(tempData')';
+    
 %% Calculate the temperature anomaly for each year, compared to the 1981-2000 mean
 % The anomaly is the difference from the mean over some baseline period. In
 % this case, we will pick the baseline period as 1981-2000 for consistency
@@ -93,28 +94,32 @@ end
 
 %Calculate the annual mean temperature over the period from 1981-2000
   %Use the find function to find rows contain data where stationdata.Year is between 1981 and 2000
-% -->
+  
+  baseYears = find(stationdata.Year>= 1981 & stationdata.Year <=2000);
+
   %Now calculate the mean over the full time period from 1981-2000
-% -->
+baseTemp = tempData(baseYears,:);
+baseYearsMean = mean(baseTemp, 'all');
 
 %Calculate the annual mean temperature anomaly as the annual mean
 %temperature for each year minus the baseline mean temperature
-% -->
+tempAnomaly = meanTempYear - baseYearsMean;
 
 %% Plot the annual temperature anomaly over the full observational record
 figure(2); clf
 %Make a scatter plot with year on the x axis and the annual mean
 %temperature anomaly on the y axis
-% -->  
+plot(year, meanTempYear, '*')
 
 %% Smooth the data by taking a 5-year running mean of the data to plot
 %This will even out some of the variability you observe in the scatter
 %plot. There are many methods for filtering data, but this is one of the
 %most straightforward - use the function movmean for this.
-% --> 
+runMean = movmean(meanTempYear, 5);
 
 %Now add a line with this smoothed data to the scatter plot
-% --> 
+hold on
+plot(year, runMean, 'r')
 
 %% Add and plot linear trends for whole time period, and for 1960 to today
 %Here we will use the function polyfit to calculate a linear fit to the data
@@ -122,12 +127,17 @@ figure(2); clf
 %read the documentation at https://www.mathworks.com/help/matlab/data_analysis/linear-regression.html
     %use polyfit to calculate the slope and intercept of a best fit line
     %over the entire observational period
-% --> 
+p = polyfit(year, runMean, 3);
     %also calculate the slope and intercept of a best fit line just from
     %1960 to the end of the observational period
     % Hint: start by finding the index for where 1960 is in the list of
     % years
-% --> 
+
+year_60s = find(stationdata.Year >= 1960);
+%temp_60s = tempData(year_60s,:);
+p = polyfit(year_60s, runMean, 3)
+
+%meanTemp_60s = mean(baseTemp, 'all');
 
 %Add lines for each of these linear trends on the annual temperature
 %anomaly plot (you can do this either directly using the values in P_all
