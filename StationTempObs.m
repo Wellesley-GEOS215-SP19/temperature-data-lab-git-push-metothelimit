@@ -109,17 +109,19 @@ tempAnomaly = meanTempYear - baseYearsMean;
 figure(2); clf
 %Make a scatter plot with year on the x axis and the annual mean
 %temperature anomaly on the y axis
-plot(year, meanTempYear, '*')
+plot(year, tempAnomaly, '*')
+hold on;
 
 %% Smooth the data by taking a 5-year running mean of the data to plot
 %This will even out some of the variability you observe in the scatter
 %plot. There are many methods for filtering data, but this is one of the
 %most straightforward - use the function movmean for this.
-runMean = movmean(meanTempYear, 5);
+runMean = movmean(tempAnomaly, 5);
 
 %Now add a line with this smoothed data to the scatter plot
-hold on
+
 plot(year, runMean, 'r');
+hold on;
 
 %% Add and plot linear trends for whole time period, and for 1960 to today
 %Here we will use the function polyfit to calculate a linear fit to the data
@@ -128,7 +130,7 @@ plot(year, runMean, 'r');
     %use polyfit to calculate the slope and intercept of a best fit line
     %over the entire observational period
 
-p_all = polyfit(year, runMean, 8);
+p_all = polyfit(year, tempAnomaly, 1);
     %also calculate the slope and intercept of a best fit line just from
     %1960 to the end of the observational period
     % Hint: start by finding the index for where 1960 is in the list of
@@ -136,21 +138,26 @@ p_all = polyfit(year, runMean, 8);
 
 year_60s = find(stationdata.Year >= 1960);
 %temp_60s = tempData(year_60s,:);
-runMean_60s = movmean(meanTempYear(year_60s), 5);
-p_60s = polyfit(year_60s, runMean_60s, 8);
+%runMean_60s = movmean(meanTempYear(year_60s), 5);
+
+
+p_60s = polyfit(year(year_60s), tempAnomaly(year_60s), 1);
 
 
 %Add lines for each of these linear trends on the annual temperature
 %anomaly plot (you can do this either directly using the values in P_all
 %and P_1960on, or using the polyval function). Plot each new line in a
 %different color.
-hold on
-val_p_all= polyval(p, year);
+val_p_all= polyval(p_all, year);
 val_p_60s = polyval(p_60s, year(year_60s));
 
-plot(year, val_p_all, 'g')
+plot(year, val_p_all, 'g');
 hold on 
-plot(year(year_60s), val_p_60s, 'b')
+plot(year(year_60s), val_p_60s, 'b');
+hold on
 
 %% Add a legend, axis labels, and a title to your temperature anomaly plot
-% --> 
+legend("Annual temperature anomaly", "Temperature anomaly running mean", "Temperature anomaly 1894-2006", "Temperature anomaly 1960-2006");
+xlabel("Years (1894-2006)");
+ylabel("Mean Yearly Temperatures");
+title("Mean Yearly Temperatures from 1894-2006");
